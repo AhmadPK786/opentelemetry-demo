@@ -74,26 +74,6 @@ jobs:
         docker push $DOCKERHUB_USERNAME/projectimages/checkout:latest
         echo "✅ Checkout done"
 
-    - name: ⭐ Build & Push Recommendation
-      run: |
-        echo "Building recommendation with tag: $IMAGE_TAG"
-        cd src/recommendation
-        docker build -t $DOCKERHUB_USERNAME/projectimages/recommendation:$IMAGE_TAG .
-        docker tag $DOCKERHUB_USERNAME/projectimages/recommendation:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/recommendation:latest
-        docker push $DOCKERHUB_USERNAME/projectimages/recommendation:$IMAGE_TAG
-        docker push $DOCKERHUB_USERNAME/projectimages/recommendation:latest
-        echo "✅ Recommendation done"
-
-    - name: 🚚 Build & Push Shipping
-      run: |
-        echo "Building shipping with tag: $IMAGE_TAG"
-        cd src/shipping
-        docker build -t $DOCKERHUB_USERNAME/projectimages/shipping:$IMAGE_TAG .
-        docker tag $DOCKERHUB_USERNAME/projectimages/shipping:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/shipping:latest
-        docker push $DOCKERHUB_USERNAME/projectimages/shipping:$IMAGE_TAG
-        docker push $DOCKERHUB_USERNAME/projectimages/shipping:latest
-        echo "✅ Shipping done"
-
     - name: 📧 Build & Push Email
       run: |
         echo "Building email with tag: $IMAGE_TAG"
@@ -114,16 +94,6 @@ jobs:
         docker push $DOCKERHUB_USERNAME/projectimages/currency:latest
         echo "✅ Currency done"
 
-    - name: 📢 Build & Push Ad
-      run: |
-        echo "Building ad with tag: $IMAGE_TAG"
-        cd src/ad
-        docker build -t $DOCKERHUB_USERNAME/projectimages/ad:$IMAGE_TAG .
-        docker tag $DOCKERHUB_USERNAME/projectimages/ad:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/ad:latest
-        docker push $DOCKERHUB_USERNAME/projectimages/ad:$IMAGE_TAG
-        docker push $DOCKERHUB_USERNAME/projectimages/ad:latest
-        echo "✅ Ad done"
-
   update-gitops:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -131,12 +101,10 @@ jobs:
     steps:
     - name: 📥 Clone GitOps Repository
       run: |
-        echo "Cloning GitOps repo..."
         git clone https://${{ secrets.GITOPS_REPO_TOKEN }}@github.com/${{ env.GITOPS_REPO }}.git gitops-repo
         cd gitops-repo
         git config user.name "GitHub Actions Bot"
         git config user.email "actions@github.com"
-        echo "✅ GitOps repo cloned"
 
     - name: 🔄 Update Kubernetes Manifests
       run: |
@@ -153,9 +121,9 @@ jobs:
         
         SHORT_TAG=${IMAGE_TAG:0:7}
         
-        update_deployment() {
-          local service=$1
-          local port=$2
+        for service in frontend cart payment product-catalog checkout email currency; do
+          PORT=8080
+          [ "$service" = "frontend" ] && PORT=3000
           
           cat >> app/opentelemetry-demo.yaml << DEPLOYMENT
         apiVersion: apps/v1
@@ -182,19 +150,7 @@ jobs:
                 image: $DOCKERHUB_USERNAME/projectimages/$service:$IMAGE_TAG
                 imagePullPolicy: Always
                 ports:
-                - containerPort: $port
-                env:
-                - name: OTEL_SERVICE_NAME
-                  value: "$service"
-                - name: OTEL_EXPORTER_OTLP_ENDPOINT
-                  value: "http://otel-collector:4317"
-                resources:
-                  requests:
-                    memory: "128Mi"
-                    cpu: "100m"
-                  limits:
-                    memory: "256Mi"
-                    cpu: "200m"
+                - containerPort: $PORT
         ---
         apiVersion: v1
         kind: Service
@@ -205,30 +161,15 @@ jobs:
           selector:
             app: $service
           ports:
-          - port: $port
-            targetPort: $port
-          type: ClusterIP
+          - port: $PORT
+            targetPort: $PORT
         ---
         DEPLOYMENT
-        }
-        
-        update_deployment "frontend" "3000"
-        update_deployment "cart" "8080"
-        update_deployment "payment" "8080"
-        update_deployment "product-catalog" "8080"
-        update_deployment "checkout" "8080"
-        update_deployment "recommendation" "8080"
-        update_deployment "shipping" "8080"
-        update_deployment "email" "8080"
-        update_deployment "currency" "8080"
-        update_deployment "ad" "8080"
-        
-        echo "✅ All manifests updated with tag: $SHORT_TAG"
+        done
 
     - name: 📤 Commit and Push Changes
       run: |
         cd gitops-repo
         git add app/opentelemetry-demo.yaml
-        git commit -m "🚀 Deploy version ${IMAGE_TAG:0:7}" || echo "No changes to commit"
+        git commit -m "🚀 Deploy version ${IMAGE_TAG:0:7}" || echo "No changes"
         git push origin main
-        echo "✅ Changes pushed to GitOps repo"
