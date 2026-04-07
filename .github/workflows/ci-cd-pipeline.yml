@@ -3,12 +3,12 @@ name: 🚀 Complete CI/CD Pipeline
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch:  # Manual trigger for testing
+  workflow_dispatch:
 
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   IMAGE_TAG: ${{ github.sha }}
-  GITOPS_REPO: "AhmadPK786/otel-demo-gitops-config"  # ← CORRECTED
+  GITOPS_REPO: "AhmadPK786/otel-demo-gitops-config"
 
 jobs:
   build-and-push:
@@ -27,7 +27,8 @@ jobs:
     - name: 🎨 Build & Push Frontend
       run: |
         echo "Building frontend with tag: $IMAGE_TAG"
-        docker build -t $DOCKERHUB_USERNAME/projectimages/frontend:$IMAGE_TAG ./src/frontend
+        cd src/frontend
+        docker build -t $DOCKERHUB_USERNAME/projectimages/frontend:$IMAGE_TAG .
         docker tag $DOCKERHUB_USERNAME/projectimages/frontend:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/frontend:latest
         docker push $DOCKERHUB_USERNAME/projectimages/frontend:$IMAGE_TAG
         docker push $DOCKERHUB_USERNAME/projectimages/frontend:latest
@@ -36,7 +37,8 @@ jobs:
     - name: 🛒 Build & Push Cart
       run: |
         echo "Building cart with tag: $IMAGE_TAG"
-        docker build -t $DOCKERHUB_USERNAME/projectimages/cart:$IMAGE_TAG ./src/cart/src
+        cd src/cart/src
+        docker build -t $DOCKERHUB_USERNAME/projectimages/cart:$IMAGE_TAG .
         docker tag $DOCKERHUB_USERNAME/projectimages/cart:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/cart:latest
         docker push $DOCKERHUB_USERNAME/projectimages/cart:$IMAGE_TAG
         docker push $DOCKERHUB_USERNAME/projectimages/cart:latest
@@ -45,7 +47,8 @@ jobs:
     - name: 💳 Build & Push Payment
       run: |
         echo "Building payment with tag: $IMAGE_TAG"
-        docker build -t $DOCKERHUB_USERNAME/projectimages/payment:$IMAGE_TAG ./src/payment
+        cd src/payment
+        docker build -t $DOCKERHUB_USERNAME/projectimages/payment:$IMAGE_TAG .
         docker tag $DOCKERHUB_USERNAME/projectimages/payment:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/payment:latest
         docker push $DOCKERHUB_USERNAME/projectimages/payment:$IMAGE_TAG
         docker push $DOCKERHUB_USERNAME/projectimages/payment:latest
@@ -54,7 +57,8 @@ jobs:
     - name: 📦 Build & Push Product-Catalog
       run: |
         echo "Building product-catalog with tag: $IMAGE_TAG"
-        docker build -t $DOCKERHUB_USERNAME/projectimages/product-catalog:$IMAGE_TAG ./src/product-catalog
+        cd src/product-catalog
+        docker build -t $DOCKERHUB_USERNAME/projectimages/product-catalog:$IMAGE_TAG .
         docker tag $DOCKERHUB_USERNAME/projectimages/product-catalog:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/product-catalog:latest
         docker push $DOCKERHUB_USERNAME/projectimages/product-catalog:$IMAGE_TAG
         docker push $DOCKERHUB_USERNAME/projectimages/product-catalog:latest
@@ -63,7 +67,8 @@ jobs:
     - name: 🛍️ Build & Push Checkout
       run: |
         echo "Building checkout with tag: $IMAGE_TAG"
-        docker build -t $DOCKERHUB_USERNAME/projectimages/checkout:$IMAGE_TAG ./src/checkout
+        cd src/checkout
+        docker build -t $DOCKERHUB_USERNAME/projectimages/checkout:$IMAGE_TAG .
         docker tag $DOCKERHUB_USERNAME/projectimages/checkout:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/checkout:latest
         docker push $DOCKERHUB_USERNAME/projectimages/checkout:$IMAGE_TAG
         docker push $DOCKERHUB_USERNAME/projectimages/checkout:latest
@@ -72,7 +77,8 @@ jobs:
     - name: ⭐ Build & Push Recommendation
       run: |
         echo "Building recommendation with tag: $IMAGE_TAG"
-        docker build -t $DOCKERHUB_USERNAME/projectimages/recommendation:$IMAGE_TAG ./src/recommendation
+        cd src/recommendation
+        docker build -t $DOCKERHUB_USERNAME/projectimages/recommendation:$IMAGE_TAG .
         docker tag $DOCKERHUB_USERNAME/projectimages/recommendation:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/recommendation:latest
         docker push $DOCKERHUB_USERNAME/projectimages/recommendation:$IMAGE_TAG
         docker push $DOCKERHUB_USERNAME/projectimages/recommendation:latest
@@ -81,7 +87,8 @@ jobs:
     - name: 🚚 Build & Push Shipping
       run: |
         echo "Building shipping with tag: $IMAGE_TAG"
-        docker build -t $DOCKERHUB_USERNAME/projectimages/shipping:$IMAGE_TAG ./src/shipping
+        cd src/shipping
+        docker build -t $DOCKERHUB_USERNAME/projectimages/shipping:$IMAGE_TAG .
         docker tag $DOCKERHUB_USERNAME/projectimages/shipping:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/shipping:latest
         docker push $DOCKERHUB_USERNAME/projectimages/shipping:$IMAGE_TAG
         docker push $DOCKERHUB_USERNAME/projectimages/shipping:latest
@@ -90,7 +97,8 @@ jobs:
     - name: 📧 Build & Push Email
       run: |
         echo "Building email with tag: $IMAGE_TAG"
-        docker build -t $DOCKERHUB_USERNAME/projectimages/email:$IMAGE_TAG ./src/email
+        cd src/email
+        docker build -t $DOCKERHUB_USERNAME/projectimages/email:$IMAGE_TAG .
         docker tag $DOCKERHUB_USERNAME/projectimages/email:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/email:latest
         docker push $DOCKERHUB_USERNAME/projectimages/email:$IMAGE_TAG
         docker push $DOCKERHUB_USERNAME/projectimages/email:latest
@@ -99,7 +107,8 @@ jobs:
     - name: 💱 Build & Push Currency
       run: |
         echo "Building currency with tag: $IMAGE_TAG"
-        docker build -t $DOCKERHUB_USERNAME/projectimages/currency:$IMAGE_TAG ./src/currency
+        cd src/currency
+        docker build -t $DOCKERHUB_USERNAME/projectimages/currency:$IMAGE_TAG .
         docker tag $DOCKERHUB_USERNAME/projectimages/currency:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/currency:latest
         docker push $DOCKERHUB_USERNAME/projectimages/currency:$IMAGE_TAG
         docker push $DOCKERHUB_USERNAME/projectimages/currency:latest
@@ -108,7 +117,8 @@ jobs:
     - name: 📢 Build & Push Ad
       run: |
         echo "Building ad with tag: $IMAGE_TAG"
-        docker build -t $DOCKERHUB_USERNAME/projectimages/ad:$IMAGE_TAG ./src/ad
+        cd src/ad
+        docker build -t $DOCKERHUB_USERNAME/projectimages/ad:$IMAGE_TAG .
         docker tag $DOCKERHUB_USERNAME/projectimages/ad:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/ad:latest
         docker push $DOCKERHUB_USERNAME/projectimages/ad:$IMAGE_TAG
         docker push $DOCKERHUB_USERNAME/projectimages/ad:latest
@@ -131,11 +141,8 @@ jobs:
     - name: 🔄 Update Kubernetes Manifests
       run: |
         cd gitops-repo
-        
-        # Create directory if not exists
         mkdir -p app
         
-        # Create fresh manifest file with namespace
         cat > app/opentelemetry-demo.yaml << 'YAML'
         apiVersion: v1
         kind: Namespace
@@ -144,15 +151,12 @@ jobs:
         ---
         YAML
         
-        # Update image tags using sed
         SHORT_TAG=${IMAGE_TAG:0:7}
         
-        # Function to update or add deployment
         update_deployment() {
           local service=$1
           local port=$2
           
-          # Add deployment
           cat >> app/opentelemetry-demo.yaml << DEPLOYMENT
         apiVersion: apps/v1
         kind: Deployment
@@ -208,7 +212,6 @@ jobs:
         DEPLOYMENT
         }
         
-        # Update all services
         update_deployment "frontend" "3000"
         update_deployment "cart" "8080"
         update_deployment "payment" "8080"
