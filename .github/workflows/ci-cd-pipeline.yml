@@ -36,13 +36,13 @@ jobs:
     - name: 🛒 Build & Push Cart
       run: |
         echo "Building cart with tag: $IMAGE_TAG"
-        cd src/cart/src
-        docker build -t $DOCKERHUB_USERNAME/projectimages:cart-$IMAGE_TAG .
+        # Build context = root directory
+        docker build -f src/cart/src/Dockerfile -t $DOCKERHUB_USERNAME/projectimages:cart-$IMAGE_TAG .
         docker tag $DOCKERHUB_USERNAME/projectimages:cart-$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages:cart-latest
         docker push $DOCKERHUB_USERNAME/projectimages:cart-$IMAGE_TAG
         docker push $DOCKERHUB_USERNAME/projectimages:cart-latest
         echo "✅ Cart done"
-
+        
     - name: 💳 Build & Push Payment
       run: |
         echo "Building payment with tag: $IMAGE_TAG"
