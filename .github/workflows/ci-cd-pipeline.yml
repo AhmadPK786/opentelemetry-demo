@@ -46,8 +46,8 @@ jobs:
     - name: 💳 Build & Push Payment
       run: |
         echo "Building payment with tag: $IMAGE_TAG"
-        cd src/payment
-        docker build -t $DOCKERHUB_USERNAME/projectimages:payment-$IMAGE_TAG .
+        # Build from root context
+        docker build -f src/payment/Dockerfile -t $DOCKERHUB_USERNAME/projectimages:payment-$IMAGE_TAG .
         docker tag $DOCKERHUB_USERNAME/projectimages:payment-$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages:payment-latest
         docker push $DOCKERHUB_USERNAME/projectimages:payment-$IMAGE_TAG
         docker push $DOCKERHUB_USERNAME/projectimages:payment-latest
