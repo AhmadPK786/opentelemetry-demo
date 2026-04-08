@@ -3,7 +3,6 @@ ARG TARGETARCH
 
 WORKDIR /usr/src/app/
 
-# Root context se build ho raha hai
 COPY src/cart/src/ ./
 COPY pb/ ./pb/
 
@@ -19,4 +18,6 @@ ENV DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
 ENV CART_PORT=8080
 
 EXPOSE ${CART_PORT}
-ENTRYPOINT [ "./cart" ]
+
+# FIXED: Entrypoint syntax
+ENTRYPOINT ["./cart"]
