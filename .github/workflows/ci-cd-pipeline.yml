@@ -19,41 +19,40 @@ jobs:
       uses: actions/checkout@v4
 
     - name: 🔐 Login to DockerHub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+      run: |
+        echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+        echo "✅ Docker login successful"
 
     - name: 🎨 Build & Push Frontend
       run: |
         echo "Building frontend with tag: $IMAGE_TAG"
         cd src/frontend
-        docker build -t $DOCKERHUB_USERNAME/projectimages/frontend:$IMAGE_TAG .
-        docker tag $DOCKERHUB_USERNAME/projectimages/frontend:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/frontend:latest
-        docker push $DOCKERHUB_USERNAME/projectimages/frontend:$IMAGE_TAG
-        docker push $DOCKERHUB_USERNAME/projectimages/frontend:latest
+        docker build -t $DOCKERHUB_USERNAME/projectimages:frontend-$IMAGE_TAG .
+        docker tag $DOCKERHUB_USERNAME/projectimages:frontend-$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages:frontend-latest
+        docker push $DOCKERHUB_USERNAME/projectimages:frontend-$IMAGE_TAG
+        docker push $DOCKERHUB_USERNAME/projectimages:frontend-latest
         echo "✅ Frontend done"
 
     - name: 🛒 Build & Push Cart
       run: |
         echo "Building cart with tag: $IMAGE_TAG"
         cd src/cart/src
-        docker build -t $DOCKERHUB_USERNAME/projectimages/cart:$IMAGE_TAG .
-        docker tag $DOCKERHUB_USERNAME/projectimages/cart:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/cart:latest
-        docker push $DOCKERHUB_USERNAME/projectimages/cart:$IMAGE_TAG
-        docker push $DOCKERHUB_USERNAME/projectimages/cart:latest
+        docker build -t $DOCKERHUB_USERNAME/projectimages:cart-$IMAGE_TAG .
+        docker tag $DOCKERHUB_USERNAME/projectimages:cart-$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages:cart-latest
+        docker push $DOCKERHUB_USERNAME/projectimages:cart-$IMAGE_TAG
+        docker push $DOCKERHUB_USERNAME/projectimages:cart-latest
         echo "✅ Cart done"
 
     - name: 💳 Build & Push Payment
       run: |
         echo "Building payment with tag: $IMAGE_TAG"
         cd src/payment
-        docker build -t $DOCKERHUB_USERNAME/projectimages/payment:$IMAGE_TAG .
-        docker tag $DOCKERHUB_USERNAME/projectimages/payment:$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages/payment:latest
-        docker push $DOCKERHUB_USERNAME/projectimages/payment:$IMAGE_TAG
-        docker push $DOCKERHUB_USERNAME/projectimages/payment:latest
+        docker build -t $DOCKERHUB_USERNAME/projectimages:payment-$IMAGE_TAG .
+        docker tag $DOCKERHUB_USERNAME/projectimages:payment-$IMAGE_TAG $DOCKERHUB_USERNAME/projectimages:payment-latest
+        docker push $DOCKERHUB_USERNAME/projectimages:payment-$IMAGE_TAG
+        docker push $DOCKERHUB_USERNAME/projectimages:payment-latest
         echo "✅ Payment done"
-
+        
     - name: 📦 Build & Push Product-Catalog
       run: |
         echo "Building product-catalog with tag: $IMAGE_TAG"
